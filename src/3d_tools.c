@@ -1,25 +1,29 @@
 #include <sdl_3d.h>
+
+#include <stdlib.h>
+
 #include <stddef.h>
 
-void					setVector(float x, float y, float z, t_vector3 *vector, t_vector3 *som)
+t_vector3				*setVector3(float x, float y, float z)
 {
+	t_vector3			*vector;
+
+	if (!(vector = (t_vector3 *)malloc(sizeof(t_vector3))))
+		return (NULL);
 	vector->x = x;
 	vector->y = y;
 	vector->z = z;
-
-	if (som != NULL)
-	{
-		som->x = x;
-		som->y = y;
-		som->z = z;
-	}
+	vector->xs = x;
+	vector->ys = y;
+	vector->zs = z;
+	return (vector);
 }
 
 void					rotateVector(const int xa, const int ya, const int za, t_object *object)
 {
-	int					i;
+	t_list				*lstWalker;
+	t_vector3			*v;
 	float				matrice[3][3];
-	t_vector3			tmp;
 
 	matrice[0][0] = Cos[za] * Cos[ya];
 	matrice[1][0] = Sin[za] * Cos[ya];
@@ -33,21 +37,26 @@ void					rotateVector(const int xa, const int ya, const int za, t_object *object
 	matrice[1][2] = Sin[za] * Sin[ya] * Cos[xa] - Cos[za] * Sin[xa];
 	matrice[2][2] = Cos[xa] * Cos[ya];
 
-	for (i = 0; i < object->nb_v; i++)
+	lstWalker = object->v;
+	while (lstWalker != NULL)
 	{
-		object->v[i].x =
-			matrice[0][0] * object->som[i].x
-			+ matrice[1][0] * object->som[i].y
-			+ matrice[2][0] * object->som[i].z;
+		v = lstWalker->data;
+		v->x =
+			matrice[0][0] * v->xs
+			+ matrice[1][0] * v->ys
+			+ matrice[2][0] * v->zs;
+		v->y =
+			matrice[0][1] * v->xs
+			+ matrice[1][1] * v->ys
+			+ matrice[2][1] * v->zs;
 
-		object->v[i].y =
-			matrice[0][1] * object->som[i].x
-			+ matrice[1][1] * object->som[i].y
-			+ matrice[2][1] * object->som[i].z;
+		v->z =
+			matrice[0][2] * v->xs
+			+ matrice[1][2] * v->ys
+			+ matrice[2][2] * v->zs;
 
-		object->v[i].z =
-			matrice[0][2] * object->som[i].x
-			+ matrice[1][2] * object->som[i].y
-			+ matrice[2][2] * object->som[i].z;
+		if (lstWalker->next == NULL)
+			break ;
+		lstWalker = lstWalker->next;
 	}
 }

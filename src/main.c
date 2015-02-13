@@ -12,46 +12,29 @@
 #define ZMAX			-500
 #define DZ				ZMAX - ZMIN
 
-t_vector3				camera = {0, 0, 0};
-
-t_object				*init(void)
-{
-	t_object			*object;
-
-	if (!(object = (t_object *)malloc(sizeof(t_object))))
-		return (NULL);
-	object->nb_v = 8;
-	if (!(object->v = (t_vector3 *)malloc(sizeof(t_vector3) * object->nb_v)))
-		return (NULL);
-	if (!(object->som = (t_vector3 *)malloc(sizeof(t_vector3) * object->nb_v)))
-		return (NULL);
-	if (!(object->s = (t_vector2 *)malloc(sizeof(t_vector2) * object->nb_v)))
-		return (NULL);
-	setVector(-100, -100, -100, &object->v[0], &object->som[0]);
-	setVector(100, -100, -100, &object->v[1], &object->som[1]);
-	setVector(100, 100, -100, &object->v[2], &object->som[2]);
-	setVector(-100, 100, -100, &object->v[3],  &object->som[3]);
-
-	setVector(100, -100, 100, &object->v[4],  &object->som[4]);
-	setVector(-100, -100, 100, &object->v[5],  &object->som[5]);
-	setVector(-100, 100, 100, &object->v[6],  &object->som[6]);
-	setVector(100, 100, 100, &object->v[7],  &object->som[7]);
-	init_sin_cos();
-
-	return (object);
-}
+t_vector3				camera = {0, 0, 0, 0, 0, 0};
+int						turn = 0;
 
 void					projection(const t_object * const object)
 {
+	t_list				*lstWalker;
+	t_vector3			*v;
 	int					i;
 
-	for (i = 0; i < object->nb_v; i++)
+	i = 0;
+	lstWalker = object->v;
+	while (lstWalker != NULL)
 	{
-		object->s[i].x = ((object->v[i].x - camera.x) * DIST) / (object->v[i].z + DZ + camera.z) + camera.x + (RX / 2);
-		object->s[i].y = ((object->v[i].y - camera.y) * DIST) / (object->v[i].z + DZ + camera.z) + camera.y + (RY / 2);
+		v = lstWalker->data;
+		object->s[i].x = ((v->x - camera.x) * DIST) / (v->z + DZ + camera.z) + camera.x + (RX / 2);
+		object->s[i].y = ((v->y - camera.y) * DIST) / (v->z + DZ + camera.z) + camera.y + (RY / 2);
+		i++;
+		if (lstWalker->next == NULL)
+			break ;
+		lstWalker = lstWalker->next;
 	}
 }
-
+/*
 void					ligne(int a, int b, int color, SDL_Surface *surf, t_object *object)
 {
 	SDL_Rect			rect;
@@ -80,18 +63,16 @@ void					fdf(int color, SDL_Surface *surf, t_object *object)
 	ligne(2, 7, color, surf, object);
 	ligne(3, 6, color, surf, object);
 }
+*/
 
-int turn = 0;
-
-void					showObject(const t_object * const object)
+void					showDot(SDL_Surface *surf, t_object *object)
 {
 	int					i;
 
-	for (i = 0; i < object->nb_v; i++)
+	for (i = 0; i < object->nb_v; i++) 
 	{
-		printf("x = %d - y = %d - z = %d\n", object->v[i].x, object->v[i].y, object->v[i].z);
+		put_pixel(surf, object->s[i].x, object->s[i].y, 0xFFFFFFFF);
 	}
-	printf("\n");
 }
 
 int			xa = 0;
@@ -103,14 +84,12 @@ void					test(t_esdl *esdl, t_object *object)
 	static SDL_Texture	*text = NULL;
 	SDL_Surface			*surf = NULL;
 
-	int					i;
-
 	surf = sdl_create_surface(RX, RY);
 
 	rotateVector(xa, ya, za, object);
-	showObject(object);
 	projection(object);
-	fdf(0xFFFFFFFF, surf, object);
+//	fdf(0xFFFFFFFF, surf, object);
+	showDot(surf, object);
 
 	text = SDL_CreateTextureFromSurface(esdl->en.ren, surf);
 
@@ -169,6 +148,29 @@ void					test(t_esdl *esdl, t_object *object)
 	SDL_DestroyTexture(text);
 }
 
+void				show(t_object *object, int details)
+{
+	t_list				*lstWalker;
+	t_vector3			*v;
+
+	if (details == 1)
+	{
+		lstWalker = object->v;
+		while (lstWalker != NULL)
+		{
+			v = lstWalker->data;
+			printf("x = %f - y = %f - z = %f\n", v->x, v->y, v->z);
+			if (lstWalker->next == NULL)
+				break ;
+			lstWalker = lstWalker->next;
+		}
+	}
+	printf("File loaded !\n");
+	printf("vertex : %d\n", object->nb_v);
+	printf("camera : %f | %f\n", camera.x, camera.y);
+	printf("\n\n");
+}
+
 int					main(int argc, char **argv)
 {
 	t_esdl			esdl;
@@ -177,7 +179,9 @@ int					main(int argc, char **argv)
 
 	if (init_sdl(&esdl) == -1)
 		return (-1);
-	object = init();
+	init_sin_cos();
+	object = load_obj("ressources/LEGO_Man.obj");
+	show(object, 0);
 	while (!esdl.en.in.key[SDL_SCANCODE_ESCAPE])
 	{
 		update_events(&esdl.en.in);
