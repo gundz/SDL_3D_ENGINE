@@ -1,7 +1,7 @@
 #include <sdl_3d.h>
 #include <math.h>
 
-void					init_sin_cos(void)
+void					init_sin_cos(float *Sin, float *Cos)
 {
 	int					i;
 

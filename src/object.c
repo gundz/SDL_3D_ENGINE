@@ -31,6 +31,7 @@ t_object					*load_obj(char *path)
 	char					*buf;
 	t_object				*object = create_object();
 	t_vector3				*tmp = NULL;
+	char					**tab;
 
 	if ((fd = openFile(path)) == -1)
 		return (NULL);
@@ -41,17 +42,17 @@ t_object					*load_obj(char *path)
 	{
 		if (buf[0] == 'v' && buf[1] == ' ')
 		{
-			char			**tab = ft_strsplit(buf, ' ');
+			tab = ft_strsplit(buf, ' ');
 			tmp = setVector3(atof(tab[1]), atof(tab[2]), atof(tab[3]));
 			lst_push_back(&vertex, tmp);
-			//free tab !!!!
+			ft_freectab(tab);
 		}
-		if (buf[0] == 'f' && buf[1] == ' ')
+		else if (buf[0] == 'f' && buf[1] == ' ')
 		{
-			char			**tab = ft_strsplit(buf, ' ');
+			tab = ft_strsplit(buf, ' ');
 			tmp = setVector3(atoi(tab[1]), atoi(tab[2]), atoi(tab[3]));
 			lst_push_back(&faces, tmp);
-			//free tab !!!!
+			ft_freectab(tab);
 		}
 	}
 	close(fd);
@@ -61,5 +62,6 @@ t_object					*load_obj(char *path)
 	object->nb_f = lst_count(faces);
 	if (!(object->s = (t_vector2 *)malloc(sizeof(t_vector2) * object->nb_v)))
 		return (NULL);
+	printf("File loaded !\nVertex : %d Faces : %d\n", object->nb_v, object->nb_f);
 	return (object);
 }

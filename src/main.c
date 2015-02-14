@@ -1,206 +1,65 @@
 #include <easy_sdl.h>
 #include <SDL.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
 
 #include <sdl_3d.h>
 #include <stdlib.h>
 
-t_vector3				camera = {0, 0, 100, 0, 0, 0};
-int						turn = 0;
-
-void					projection(const t_object * const object)
+void					test(t_esdl *esdl, t_data *data)
 {
-	t_list				*lstWalker;
-	t_vector3			*v;
-	int					i;
+	data->surf = sdl_create_surface(RX, RY);
 
-	i = 0;
-	lstWalker = object->v;
-	while (lstWalker != NULL)
-	{
-		v = lstWalker->data;
-		object->s[i].x = ((v->x - camera.x) * (v->z - camera.z)) + camera.x + (RX / 2);
-		object->s[i].y = ((v->y - camera.y) * (v->z - camera.z)) + camera.y + (RY / 2);
-		i++;
-		if (lstWalker->next == NULL)
-			break ;
-		lstWalker = lstWalker->next;
-	}
-}
+	rotateVector(data->o->r.x, data->o->r.y, data->o->r.z, data->o, data);
+	projection(&data->c, data->o);
 
-void					ligne(int a, int b, int color, SDL_Surface *surf, t_object *object)
-{
-	SDL_Rect			rect;
+	if (data->view % 2 == 0)
+		wireframeView(data->surf, data->o, 0xFFFFFFFF);
+	else if (data->view % 1 == 0)
+		dotView(data->surf, data->o, 0xFFFFFFFF);
 
-	rect.x = object->s[a].x;
-	rect.y = object->s[a].y;
-	rect.w = object->s[b].x;
-	rect.h = object->s[b].y;
-	draw_line(surf, rect, color);
-}
+	objectRotation(esdl, data->o);
+	cameraTranslation(data, esdl);
+	toggleView(data, esdl);
 
-void					fdf(int color, SDL_Surface *surf, t_object *object)
-{
-	t_list				*lstWalker;
-	t_vector3			*f;
-
-	lstWalker = object->f;
-	while (lstWalker != NULL)
-	{
-		f = lstWalker->data;
-		ligne(f->x - 1, f->y - 1, color, surf, object);
-		ligne(f->y - 1, f->z - 1, color, surf, object);
-		ligne(f->z - 1, f->x - 1, color, surf, object);
-		if (lstWalker->next == NULL)
-			break ;
-		lstWalker = lstWalker->next;
-	}
-}
-
-
-void					showDot(SDL_Surface *surf, t_object *object)
-{
-	int					i;
-
-	for (i = 0; i < object->nb_v; i++) 
-	{
-		put_pixel(surf, object->s[i].x, object->s[i].y, 0xFFFFFFFF);
-	}
-}
-
-int			xa = 0;
-int			ya = 0;
-int			za = 0;
-
-void					test(t_esdl *esdl, t_object *object)
-{
-	static SDL_Texture	*text = NULL;
-	SDL_Surface			*surf = NULL;
-
-	surf = sdl_create_surface(RX, RY);
-
-	rotateVector(xa, ya, za, object);
-	projection(object);
-	fdf(0xFFFFFFFF, surf, object);
-//	showDot(surf, object);
-
-	text = SDL_CreateTextureFromSurface(esdl->en.ren, surf);
-
-	if (esdl->en.in.key[SDL_SCANCODE_D])
-		ya = (ya + 3) % 360;
-	if (esdl->en.in.key[SDL_SCANCODE_A])
-	{
-		if (ya - 3 <= 0)
-			ya = 360 + ya;
-		ya = (ya - 3) % 360;
-	}
-
-	if (esdl->en.in.key[SDL_SCANCODE_S])
-		xa = (xa + 3) % 360;
-	if (esdl->en.in.key[SDL_SCANCODE_W])
-	{
-		if (xa - 3 <= 0)
-			xa = 360 + xa;
-		xa = (xa - 3) % 360;
-	}	
-	
-	if (esdl->en.in.key[SDL_SCANCODE_Q])
-		za = (za + 3) % 360;
-	if (esdl->en.in.key[SDL_SCANCODE_E])
-	{
-		if (za - 3 <= 0)
-			za = 360 + za;
-		za = (za - 3) % 360;
-	}
-
-	if (esdl->en.in.key[SDL_SCANCODE_KP_PLUS])
-		camera.z += 1;
-	if (esdl->en.in.key[SDL_SCANCODE_KP_MINUS])
-		camera.z -= 1;
-	if (esdl->en.in.key[SDL_SCANCODE_UP])
-		camera.y -= 1;
-	if (esdl->en.in.key[SDL_SCANCODE_DOWN])
-		camera.y += 1;
-	if (esdl->en.in.key[SDL_SCANCODE_LEFT])
-		camera.x -= 1;
-	if (esdl->en.in.key[SDL_SCANCODE_RIGHT])
-		camera.x += 1;
-
-
-	if (esdl->en.in.key[SDL_SCANCODE_T])
-	{
-		if (turn == 1)
-			turn = 0;
-		else
-			turn = 1;
-		esdl->en.in.key[SDL_SCANCODE_T] = 0;
-	}
-
-	if (turn == 1)
-	{
-		ya = (ya + 3) % 360;
-		xa = (xa + 1) % 360;
-		za = (za + 1) % 360;
-	}
-
+	data->text = SDL_CreateTextureFromSurface(esdl->en.ren, data->surf);
 	SDL_RenderClear(esdl->en.ren);
-	SDL_RenderCopy(esdl->en.ren, text, NULL, NULL);
+	SDL_RenderCopy(esdl->en.ren, data->text, NULL, NULL);
 	SDL_RenderPresent(esdl->en.ren);
-	SDL_FreeSurface(surf);
-	SDL_DestroyTexture(text);
+	SDL_FreeSurface(data->surf);
+	SDL_DestroyTexture(data->text);
 }
 
-void				show(t_object *object, int details)
+void					init(t_data *data)
 {
-	t_list				*lstWalker;
-	t_vector3			*v;
-
-	if (details == 1)
-	{
-		lstWalker = object->v;
-		while (lstWalker != NULL)
-		{
-			v = lstWalker->data;
-			printf("x = %f - y = %f - z = %f\n", v->x, v->y, v->z);
-			if (lstWalker->next == NULL)
-				break ;
-			lstWalker = lstWalker->next;
-		}
-	}
-	printf("File loaded !\n");
-	printf("vertex : %d Faces : %d\n", object->nb_v, object->nb_f);
-	printf("camera : %f | %f\n", camera.x, camera.y);
-	printf("\n\n");
+	init_sin_cos(data->Sin, data->Cos);
+	data->c.x = 0;
+	data->c.y = 0;
+	data->c.z = 100;
+	data->view = 0;
 }
 
-int					main(int argc, char **argv)
+int						main(int argc, char **argv)
 {
-	t_esdl			esdl;
-	t_object		*object;
+	t_data				data;
+	t_esdl				esdl;
 
 	if (argc != 2)
 	{
 		printf("Usage : file.obj\n");
 		return (0);
 	}
-	if ((object = load_obj(argv[1])) == NULL)
+	init(&data);
+	if ((data.o = load_obj(argv[1])) == NULL)
 	{
 		printf("Error while loading file !\n");
 		return (-1);
 	}
-	show(object, 0);
 	if (init_sdl(&esdl) == -1)
 		return (-1);
-	init_sin_cos();
 	while (!esdl.en.in.key[SDL_SCANCODE_ESCAPE])
 	{
 		update_events(&esdl.en.in);
 		fps_counter(&esdl);
-		test(&esdl, object);
+		test(&esdl, &data);
 	}
-	(void)argc;
-	(void)argv;
 	return (0);
 }

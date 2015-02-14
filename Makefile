@@ -1,7 +1,7 @@
 NAME = Project
 
 CC =  gcc
-CFLAGS = -Wall -Wextra -Werror -g -lm
+CFLAGS = -Wall -Wextra -Werror -o3 -lm
 CFLAGS += `sdl2-config --cflags`
 
 LFLAGS += `sdl2-config --libs`
@@ -27,7 +27,10 @@ SRC =		\
 			3d_tools.c \
 			math_tools.c \
 			object.c \
+			wireframeView.c \
+			dotView.c \
 			get_next_line.c \
+			event.c \
 
 SRC +=	main.c
 

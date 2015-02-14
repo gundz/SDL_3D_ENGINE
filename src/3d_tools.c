@@ -19,23 +19,51 @@ t_vector3				*setVector3(float x, float y, float z)
 	return (vector);
 }
 
-void					rotateVector(const int xa, const int ya, const int za, t_object *object)
+void					projection(const t_vector3 *const camera, const t_object *const object)
+{
+	t_list				*lstWalker;
+	t_vector3			*v;
+	int					i;
+
+	i = 0;
+	lstWalker = object->v;
+	while (lstWalker != NULL)
+	{
+		v = lstWalker->data;
+		object->s[i].x = ((v->x - camera->x) * (v->z - camera->z)) + camera->x + (RX / 2);
+		object->s[i].y = ((v->y - camera->y) * (v->z - camera->z)) + camera->y + (RY / 2);
+		i++;
+		if (lstWalker->next == NULL)
+			break ;
+		lstWalker = lstWalker->next;
+	}
+}
+
+void					rotate(int *coor, int value)
+{
+	if (*coor + value <= 0)
+		*coor = 360 + value;
+	else
+		*coor = (*coor + value) % 360;
+}
+
+void					rotateVector(const int xa, const int ya, const int za, t_object *object, t_data *data)
 {
 	t_list				*lstWalker;
 	t_vector3			*v;
 	float				matrice[3][3];
 
-	matrice[0][0] = Cos[za] * Cos[ya];
-	matrice[1][0] = Sin[za] * Cos[ya];
-	matrice[2][0] = -Sin[ya];
+	matrice[0][0] = data->Cos[za] * data->Cos[ya];
+	matrice[1][0] = data->Sin[za] * data->Cos[ya];
+	matrice[2][0] = -data->Sin[ya];
 
-	matrice[0][1] = Cos[za] * Sin[ya] * Sin[xa] - Sin[za] * Cos[xa];
-	matrice[1][1] = Sin[za] * Sin[ya] * Sin[xa] + Cos[xa] * Cos[za];
-	matrice[2][1] = Sin[xa] * Cos[ya];
+	matrice[0][1] = data->Cos[za] * data->Sin[ya] * data->Sin[xa] - data->Sin[za] * data->Cos[xa];
+	matrice[1][1] = data->Sin[za] * data->Sin[ya] * data->Sin[xa] + data->Cos[xa] * data->Cos[za];
+	matrice[2][1] = data->Sin[xa] * data->Cos[ya];
 
-	matrice[0][2] = Cos[za] * Sin[ya] * Cos[xa] + Sin[za] * Sin[xa];
-	matrice[1][2] = Sin[za] * Sin[ya] * Cos[xa] - Cos[za] * Sin[xa];
-	matrice[2][2] = Cos[xa] * Cos[ya];
+	matrice[0][2] = data->Cos[za] * data->Sin[ya] * data->Cos[xa] + data->Sin[za] * data->Sin[xa];
+	matrice[1][2] = data->Sin[za] * data->Sin[ya] * data->Cos[xa] - data->Cos[za] * data->Sin[xa];
+	matrice[2][2] = data->Cos[xa] * data->Cos[ya];
 
 	lstWalker = object->v;
 	while (lstWalker != NULL)
