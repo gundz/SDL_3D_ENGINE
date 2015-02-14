@@ -7,7 +7,7 @@
 #include <sdl_3d.h>
 #include <stdlib.h>
 
-t_vector3				camera = {0, 0, 0, 0, 0, 0};
+t_vector3				camera = {0, 0, 100, 0, 0, 0};
 int						turn = 0;
 
 void					projection(const t_object * const object)
@@ -29,7 +29,7 @@ void					projection(const t_object * const object)
 		lstWalker = lstWalker->next;
 	}
 }
-/*
+
 void					ligne(int a, int b, int color, SDL_Surface *surf, t_object *object)
 {
 	SDL_Rect			rect;
@@ -43,22 +43,22 @@ void					ligne(int a, int b, int color, SDL_Surface *surf, t_object *object)
 
 void					fdf(int color, SDL_Surface *surf, t_object *object)
 {
-	ligne(0, 1, color, surf, object);
-	ligne(1, 2, color, surf, object);
-	ligne(2, 3, color, surf, object);
-	ligne(3, 0, color, surf, object);
+	t_list				*lstWalker;
+	t_vector3			*f;
 
-	ligne(4, 5, color, surf, object);
-	ligne(5, 6, color, surf, object);
-	ligne(6, 7, color, surf, object);
-	ligne(7, 4, color, surf, object);
-
-	ligne(0, 5, color, surf, object);
-	ligne(1, 4, color, surf, object);
-	ligne(2, 7, color, surf, object);
-	ligne(3, 6, color, surf, object);
+	lstWalker = object->f;
+	while (lstWalker != NULL)
+	{
+		f = lstWalker->data;
+		ligne(f->x - 1, f->y - 1, color, surf, object);
+		ligne(f->y - 1, f->z - 1, color, surf, object);
+		ligne(f->z - 1, f->x - 1, color, surf, object);
+		if (lstWalker->next == NULL)
+			break ;
+		lstWalker = lstWalker->next;
+	}
 }
-*/
+
 
 void					showDot(SDL_Surface *surf, t_object *object)
 {
@@ -83,8 +83,8 @@ void					test(t_esdl *esdl, t_object *object)
 
 	rotateVector(xa, ya, za, object);
 	projection(object);
-//	fdf(0xFFFFFFFF, surf, object);
-	showDot(surf, object);
+	fdf(0xFFFFFFFF, surf, object);
+//	showDot(surf, object);
 
 	text = SDL_CreateTextureFromSurface(esdl->en.ren, surf);
 
@@ -170,7 +170,7 @@ void				show(t_object *object, int details)
 		}
 	}
 	printf("File loaded !\n");
-	printf("vertex : %d\n", object->nb_v);
+	printf("vertex : %d Faces : %d\n", object->nb_v, object->nb_f);
 	printf("camera : %f | %f\n", camera.x, camera.y);
 	printf("\n\n");
 }
@@ -182,7 +182,7 @@ int					main(int argc, char **argv)
 
 	if (argc != 2)
 	{
-		printf("Usage : file.obj");
+		printf("Usage : file.obj\n");
 		return (0);
 	}
 	if ((object = load_obj(argv[1])) == NULL)

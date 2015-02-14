@@ -24,6 +24,8 @@ typedef struct		s_object
 	int				nb_v;
 	t_list			*v;	
 	t_list			*som;
+	int				nb_f;
+	t_list			*f;
 	t_vector2		*s;
 }					t_object;
 

@@ -36,6 +36,7 @@ t_object					*load_obj(char *path)
 		return (NULL);
 
 	t_list					*vertex = NULL;
+	t_list					*faces = NULL;
 	while ((buf = get_next_line(fd)) != NULL)
 	{
 		if (buf[0] == 'v' && buf[1] == ' ')
@@ -45,10 +46,19 @@ t_object					*load_obj(char *path)
 			lst_push_back(&vertex, tmp);
 			//free tab !!!!
 		}
+		if (buf[0] == 'f' && buf[1] == ' ')
+		{
+			char			**tab = ft_strsplit(buf, ' ');
+			tmp = setVector3(atoi(tab[1]), atoi(tab[2]), atoi(tab[3]));
+			lst_push_back(&faces, tmp);
+			//free tab !!!!
+		}
 	}
 	close(fd);
 	object->v = vertex;
 	object->nb_v = lst_count(vertex);
+	object->f = faces;
+	object->nb_f = lst_count(faces);
 	if (!(object->s = (t_vector2 *)malloc(sizeof(t_vector2) * object->nb_v)))
 		return (NULL);
 	return (object);
