@@ -181,7 +181,10 @@ int					main(int argc, char **argv)
 	t_object		*object;
 
 	if (argc != 2)
+	{
 		printf("Usage : file.obj");
+		return (0);
+	}
 	if ((object = load_obj(argv[1])) == NULL)
 	{
 		printf("Error while loading file !\n");
