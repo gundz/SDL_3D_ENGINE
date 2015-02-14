@@ -7,11 +7,6 @@
 #include <sdl_3d.h>
 #include <stdlib.h>
 
-#define DIST			1000
-#define ZMIN			500
-#define ZMAX			-500
-#define DZ				ZMAX - ZMIN
-
 t_vector3				camera = {0, 0, 0, 0, 0, 0};
 int						turn = 0;
 
@@ -26,8 +21,8 @@ void					projection(const t_object * const object)
 	while (lstWalker != NULL)
 	{
 		v = lstWalker->data;
-		object->s[i].x = ((v->x - camera.x) * DIST) / (v->z + DZ + camera.z) + camera.x + (RX / 2);
-		object->s[i].y = ((v->y - camera.y) * DIST) / (v->z + DZ + camera.z) + camera.y + (RY / 2);
+		object->s[i].x = ((v->x - camera.x) * (v->z - camera.z)) + camera.x + (RX / 2);
+		object->s[i].y = ((v->y - camera.y) * (v->z - camera.z)) + camera.y + (RY / 2);
 		i++;
 		if (lstWalker->next == NULL)
 			break ;
@@ -120,10 +115,19 @@ void					test(t_esdl *esdl, t_object *object)
 		za = (za - 3) % 360;
 	}
 
+	if (esdl->en.in.key[SDL_SCANCODE_KP_PLUS])
+		camera.z += 1;
+	if (esdl->en.in.key[SDL_SCANCODE_KP_MINUS])
+		camera.z -= 1;
 	if (esdl->en.in.key[SDL_SCANCODE_UP])
-		camera.z += 10;
+		camera.y -= 1;
 	if (esdl->en.in.key[SDL_SCANCODE_DOWN])
-		camera.z -= 10;
+		camera.y += 1;
+	if (esdl->en.in.key[SDL_SCANCODE_LEFT])
+		camera.x -= 1;
+	if (esdl->en.in.key[SDL_SCANCODE_RIGHT])
+		camera.x += 1;
+
 
 	if (esdl->en.in.key[SDL_SCANCODE_T])
 	{
@@ -174,14 +178,19 @@ void				show(t_object *object, int details)
 int					main(int argc, char **argv)
 {
 	t_esdl			esdl;
-
 	t_object		*object;
 
+	if (argc != 2)
+		printf("Usage : file.obj");
+	if ((object = load_obj(argv[1])) == NULL)
+	{
+		printf("Error while loading file !\n");
+		return (-1);
+	}
+	show(object, 0);
 	if (init_sdl(&esdl) == -1)
 		return (-1);
 	init_sin_cos();
-	object = load_obj("ressources/LEGO_Man.obj");
-	show(object, 0);
 	while (!esdl.en.in.key[SDL_SCANCODE_ESCAPE])
 	{
 		update_events(&esdl.en.in);

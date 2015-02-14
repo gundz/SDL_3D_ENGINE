@@ -22,6 +22,16 @@ void                update_events(t_input *in)
 			in->key[event.key.keysym.scancode] = 0;
 			break ;
 		}
+		else if (event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			in->mouse[event.button.button] = 1;
+			break ;
+		}
+		else if (event.type == SDL_MOUSEBUTTONUP)
+		{
+			in->mouse[event.button.button] = 0;
+			break ;
+		}
 		else if (event.type == SDL_QUIT)
 			 exit (0);
 	} 

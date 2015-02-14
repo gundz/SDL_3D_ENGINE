@@ -10,6 +10,7 @@
 typedef struct			s_input
 {
 	char				key[SDL_NUM_SCANCODES];
+	char				mouse[8];
 	int					m_x;
 	int					m_y;
 	int					m_r_x;
