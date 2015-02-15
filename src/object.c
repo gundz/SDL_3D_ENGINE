@@ -51,6 +51,10 @@ t_object					*load_obj(char *path)
 		{
 			tab = ft_strsplit(buf, ' ');
 			tmp = setVector3(atoi(tab[1]), atoi(tab[2]), atoi(tab[3]));
+			if (ft_ctablen((const char **)tab) == 5)
+				tmp->xs = atoi(tab[4]);
+			else
+				tmp->xs = -1;
 			lst_push_back(&faces, tmp);
 			ft_freectab(tab);
 		}

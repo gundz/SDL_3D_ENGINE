@@ -25,7 +25,13 @@ void					wireframeView(SDL_Surface *surf, t_object *object, const int color)
 		f = lstWalker->data;
 		line(f->x - 1, f->y - 1, surf, object, color);
 		line(f->y - 1, f->z - 1, surf, object, color);
-		line(f->z - 1, f->x - 1, surf, object, color);
+		if (f->xs != -1)
+		{
+			line(f->z - 1, f->xs - 1, surf, object, color);
+			line(f->xs - 1, f->x - 1, surf, object, color);
+		}
+		else
+			line(f->z - 1, f->x - 1, surf, object, color);
 		if (lstWalker->next == NULL)
 			break ;
 		lstWalker = lstWalker->next;
