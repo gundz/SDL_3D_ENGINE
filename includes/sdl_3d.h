@@ -41,6 +41,7 @@ typedef struct		s_object
 
 typedef struct		s_data
 {
+	t_esdl			esdl;
 	float			Sin[360]; //Pre computed Sin
 	float			Cos[360]; //Pre computed Cos
 	SDL_Texture		*text; //SDL Texture
@@ -74,7 +75,7 @@ void				dotView(SDL_Surface *surf, t_object *objec, int color);
 t_object			*load_obj(char *path);
 
 //EVENTS
-void				objectRotation(t_esdl *esdl, t_object *object);
+void				objectRotation(t_data *data, t_object *object);
 void				cameraTranslation(t_data *data, t_esdl *esdl);
 void				toggleView(t_data *data, t_esdl *esdl);
 

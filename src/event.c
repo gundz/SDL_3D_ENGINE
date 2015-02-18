@@ -2,22 +2,40 @@
 #include <sdl_3d.h>
 #include <SDL.h>
 
-void					objectRotation(t_esdl *esdl, t_object *object)
+void					objectRotation(t_data *data, t_object *object)
 {
-	if (esdl->en.in.key[SDL_SCANCODE_W])
+	if (data->esdl.en.in.key[SDL_SCANCODE_W])
+	{
 		rotate(&object->r.x, 3);
-	if (esdl->en.in.key[SDL_SCANCODE_S])
+		rotateVector(object->r.x, object->r.y, object->r.z, object, data);
+	}
+	if (data->esdl.en.in.key[SDL_SCANCODE_S])
+	{
 		rotate(&object->r.x, -3);
+		rotateVector(object->r.x, object->r.y, object->r.z, object, data);
+	}
 
-	if (esdl->en.in.key[SDL_SCANCODE_A])
+	if (data->esdl.en.in.key[SDL_SCANCODE_A])
+	{
 		rotate(&object->r.y, 3);
-	if (esdl->en.in.key[SDL_SCANCODE_D])
+		rotateVector(object->r.x, object->r.y, object->r.z, object, data);
+	}
+	if (data->esdl.en.in.key[SDL_SCANCODE_D])
+	{
 		rotate(&object->r.y, -3);
+		rotateVector(object->r.x, object->r.y, object->r.z, object, data);
+	}
 
-	if (esdl->en.in.key[SDL_SCANCODE_Q])
+	if (data->esdl.en.in.key[SDL_SCANCODE_Q])
+	{
 		rotate(&object->r.z, 3);
-	if (esdl->en.in.key[SDL_SCANCODE_E])
+		rotateVector(object->r.x, object->r.y, object->r.z, object, data);
+	}
+	if (data->esdl.en.in.key[SDL_SCANCODE_E])
+	{
 		rotate(&object->r.z, -3);
+		rotateVector(object->r.x, object->r.y, object->r.z, object, data);
+	}
 }
 
 void					cameraTranslation(t_data *data, t_esdl *esdl)
