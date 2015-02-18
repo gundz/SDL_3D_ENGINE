@@ -16,24 +16,18 @@ void					line(const int a, const int b, SDL_Surface *surf, t_object *object, con
 
 void					wireframeView(SDL_Surface *surf, t_object *object, const int color)
 {
-	t_list				*lstWalker;
-	t_vector3			*f;
+	int					i;
 
-	lstWalker = object->f;
-	while (lstWalker != NULL)
+	for (i = 0; i < object->nb_f; i++)
 	{
-		f = lstWalker->data;
-		line(f->x - 1, f->y - 1, surf, object, color);
-		line(f->y - 1, f->z - 1, surf, object, color);
-		if (f->xs != -1)
+		line(object->f[i]->x - 1, object->f[i]->y - 1, surf, object, color);
+		line(object->f[i]->y - 1, object->f[i]->z - 1, surf, object, color);
+		if (object->f[i]->xs != -1)
 		{
-			line(f->z - 1, f->xs - 1, surf, object, color);
-			line(f->xs - 1, f->x - 1, surf, object, color);
+			line(object->f[i]->z - 1, object->f[i]->xs - 1, surf, object, color);
+			line(object->f[i]->xs - 1, object->f[i]->x - 1, surf, object, color);
 		}
 		else
-			line(f->z - 1, f->x - 1, surf, object, color);
-		if (lstWalker->next == NULL)
-			break ;
-		lstWalker = lstWalker->next;
+			line(object->f[i]->z - 1, object->f[i]->x - 1, surf, object, color);
 	}
 }

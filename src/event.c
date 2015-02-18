@@ -38,27 +38,27 @@ void					objectRotation(t_data *data, t_object *object)
 	}
 }
 
-void					cameraTranslation(t_data *data, t_esdl *esdl)
+void					cameraTranslation(t_data *data)
 {
-	if (esdl->en.in.key[SDL_SCANCODE_KP_PLUS])
+	if (data->esdl.en.in.key[SDL_SCANCODE_KP_PLUS])
 		data->c.z += 1;
-	if (esdl->en.in.key[SDL_SCANCODE_KP_MINUS])
+	if (data->esdl.en.in.key[SDL_SCANCODE_KP_MINUS])
 		data->c.z -= 1;
-	if (esdl->en.in.key[SDL_SCANCODE_UP])
+	if (data->esdl.en.in.key[SDL_SCANCODE_UP])
 		data->c.y -= 1;
-	if (esdl->en.in.key[SDL_SCANCODE_DOWN])
+	if (data->esdl.en.in.key[SDL_SCANCODE_DOWN])
 		data->c.y += 1;
-	if (esdl->en.in.key[SDL_SCANCODE_LEFT])
+	if (data->esdl.en.in.key[SDL_SCANCODE_LEFT])
 		data->c.x -= 1;
-	if (esdl->en.in.key[SDL_SCANCODE_RIGHT])
+	if (data->esdl.en.in.key[SDL_SCANCODE_RIGHT])
 		data->c.x += 1;
 }
 
-void					toggleView(t_data *data, t_esdl *esdl)
+void					toggleView(t_data *data)
 {
-	if (esdl->en.in.key[SDL_SCANCODE_V])
+	if (data->esdl.en.in.key[SDL_SCANCODE_V])
 	{
-		esdl->en.in.key[SDL_SCANCODE_V] = 0;
+		data->esdl.en.in.key[SDL_SCANCODE_V] = 0;
 		data->view += 1;
 	}
 }

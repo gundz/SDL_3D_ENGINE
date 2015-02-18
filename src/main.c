@@ -4,12 +4,8 @@
 #include <sdl_3d.h>
 #include <stdlib.h>
 
-#include <libft.h>
-
-void					test(t_data *data)
+void					main_3D(t_data *data)
 {
-	t_esdl				*esdl = &data->esdl;
-
 	data->surf = sdl_create_surface(RX, RY);
 
 	projection(&data->c, data->o);
@@ -20,13 +16,13 @@ void					test(t_data *data)
 		dotView(data->surf, data->o, 0xFFFFFFFF);
 
 	objectRotation(data, data->o);
-	cameraTranslation(data, esdl);
-	toggleView(data, esdl);
+	cameraTranslation(data);
+	toggleView(data);
 
-	data->text = SDL_CreateTextureFromSurface(esdl->en.ren, data->surf);
-	SDL_RenderClear(esdl->en.ren);
-	SDL_RenderCopy(esdl->en.ren, data->text, NULL, NULL);
-	SDL_RenderPresent(esdl->en.ren);
+	data->text = SDL_CreateTextureFromSurface(data->esdl.en.ren, data->surf);
+	SDL_RenderClear(data->esdl.en.ren);
+	SDL_RenderCopy(data->esdl.en.ren, data->text, NULL, NULL);
+	SDL_RenderPresent(data->esdl.en.ren);
 	SDL_FreeSurface(data->surf);
 	SDL_DestroyTexture(data->text);
 }
@@ -61,7 +57,7 @@ int						main(int argc, char **argv)
 	{
 		update_events(&data.esdl.en.in);
 		fps_counter(&data.esdl);
-		test(&data);
+		main_3D(&data);
 	}
 	return (0);
 }

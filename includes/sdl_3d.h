@@ -26,15 +26,19 @@ typedef struct		s_vector3d
 	int				x;
 	int				y;
 	int				z;
+	int				xs;
+	int				ys;
+	int				zs;
+
 }					t_vector3d;
 
 typedef struct		s_object
 {
 	int				nb_v; //number of vertex
-	t_list			*v;	//vertex list
+	t_vector3		**v;	//vertex list
 	t_list			*som; //raw vertex list
 	int				nb_f; //number of faces
-	t_list			*f; //faces list
+	t_vector3d		**f; //faces list
 	t_vector2		*s; //2D projection
 	t_vector3d		r; //Rotation value
 }					t_object;
@@ -60,6 +64,7 @@ void				init_sin_cos(float *Sin, float *Cos);
 //Vector
 
 t_vector3			*setVector3(float x, float y, float z);
+t_vector3d			*setVector3d(int x, int y, int z);
 
 void				rotate(int *coor, int value);
 void				rotateVector(const int xa, const int ya, const int za, t_object *object, t_data *data);
@@ -76,8 +81,8 @@ t_object			*load_obj(char *path);
 
 //EVENTS
 void				objectRotation(t_data *data, t_object *object);
-void				cameraTranslation(t_data *data, t_esdl *esdl);
-void				toggleView(t_data *data, t_esdl *esdl);
+void				cameraTranslation(t_data *data);
+void				toggleView(t_data *data);
 
 //La fleme d'en faire un
 char				*get_next_line(const int fd);
