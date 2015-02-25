@@ -7,29 +7,29 @@
 
 #include <stdio.h>
 
-int							openFile(char *path)
+int				openFile(char *path)
 {
-	int						fd;
+	int			fd;
 
 	if ((fd = open(path, O_RDONLY)) == -1)
 		return (-1);
 	return (fd);
 }
 
-t_object					*create_object(void)
+t_object			*create_object(void)
 {
-	t_object				*object;
+	t_object		*object;
 
 	if (!(object = (t_object *)malloc(sizeof(t_object))))
 		return (NULL);
 	return (object);
 }
 
-void						store_vertex(t_list *lst, t_object *object)
+void				store_vertex(t_list *lst, t_object *object)
 {
-	t_vector3				*vertex;
-	t_list					*lstWalker;
-	int						i;
+	t_vector3		*vertex;
+	t_list			*lstWalker;
+	int			i;
 
 	object->nb_v = lst_count(lst);
 	if (!(object->v = (t_vector3 **)malloc(sizeof(t_vector3 *) * object->nb_v)))
@@ -47,11 +47,11 @@ void						store_vertex(t_list *lst, t_object *object)
 	//free_lst
 }
 
-void						store_faces(t_list *lst, t_object *object)
+void				store_faces(t_list *lst, t_object *object)
 {
-	t_vector3d				*face;
-	t_list					*lstWalker;
-	int						i;
+	t_vector3d		*face;
+	t_list			*lstWalker;
+	int			i;
 
 	object->nb_f = lst_count(lst);
 	if (!(object->f = (t_vector3d **)malloc(sizeof(t_vector3d *) * object->nb_f)))
@@ -69,14 +69,14 @@ void						store_faces(t_list *lst, t_object *object)
 	//free_lst
 }
 
-t_object					*load_obj(char *path)
+t_object			*load_obj(char *path)
 {
-	int						fd;
-	char					*buf;
-	t_object				*object = create_object();
-	t_vector3				*tmp;
-	t_vector3d				*tmp2;
-	char					**tab;
+	int			fd;
+	char			*buf;
+	t_object		*object = create_object();
+	t_vector3		*tmp;
+	t_vector3d		*tmp2;
+	char			**tab;
 
 	if ((fd = openFile(path)) == -1)
 		return (NULL);

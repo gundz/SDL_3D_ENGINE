@@ -2,6 +2,7 @@ NAME = Project
 
 CC =  gcc
 CFLAGS = -Wall -Wextra -Werror -O3 -lm
+#CFLAGS = -g -lm
 CFLAGS += `sdl2-config --cflags`
 
 LFLAGS += `sdl2-config --libs`
